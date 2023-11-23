@@ -1,5 +1,8 @@
+import { ordersValidationSchema } from './user.validation';
 import { Schema, model } from "mongoose";
-import { TAddress, TFullName, TUser } from "./user.interface";
+import { TAddress, TFullName, TOrders, TUser } from "./user.interface";
+import bcrypt from "bcrypt";
+import config from "../../config";
 
 const fullNameSchema = new Schema<TFullName>({
   firstName: {
@@ -24,15 +27,13 @@ const addressSchema = new Schema<TAddress>({
   },
 });
 
-// const orderSchema = new Schema<TOrders>({
-//   productName: {
-//     type: String,
-//     required: [true, "Product is required"],
-//     trim: true,
-//   },
-//   price: { type: Number, required: [true, "Price is required"] },
-//   quantity: { type: Number, required: [true, "Quantity is required"] },
-// });
+const orderSchema = new Schema<TOrders>({
+  productName: {
+    type: String,
+  },
+  price: { type: Number },
+  quantity: { type: Number },
+});
 
 const userSchema = new Schema<TUser>({
   userId: { type: Number, required: [true, "Id is required"], unique: true },
@@ -40,7 +41,6 @@ const userSchema = new Schema<TUser>({
   password: {
     type: String,
     required: [true, "Password is required"],
-    unique: true
   },
   fullName: {
     type: fullNameSchema,
@@ -56,10 +56,35 @@ const userSchema = new Schema<TUser>({
     required: true,
   },
   address: { type: addressSchema, required: true },
-  //   orders: {
-  //     type: orderSchema,
-  //     required: true,
-  //   },
+  isDeleted: { type: Boolean, default: false },
+  orders: {
+    type: [orderSchema],
+  },
+});
+
+userSchema.pre("save", async function (next) {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const user = this;
+  user.password = await bcrypt.hash(user.password, Number(config.bcrypt_url));
+  next();
+});
+
+userSchema.post("save", async function (doc, next) {
+  doc.password = "";
+  next();
+});
+
+userSchema.pre("find", async function (next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+userSchema.pre("findOne", async function (next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+userSchema.pre("aggregate", async function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+  next();
 });
 
 export const UserModel = model<TUser>("User", userSchema);

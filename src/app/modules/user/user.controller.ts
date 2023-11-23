@@ -1,16 +1,22 @@
 import { Request, Response } from "express";
 import { UserServices } from "./user.service";
+import userValidationSchema from "./user.validation";
 
 const createUser = async (req: Request, res: Response) => {
   try {
     const user = req.body;
-    const result = UserServices.createUserIntoDB(user);
+
+    //data validation
+    const zodParseData = userValidationSchema.parse(user);
+
+    const result = UserServices.createUserIntoDB(zodParseData);
 
     res.status(200).json({
       success: true,
       message: "User created successfully!",
       data: result,
     });
+    return user;
   } catch (error: any) {
     res.status(404).json({
       success: false,
@@ -64,7 +70,70 @@ const getSingleUser = async (req: Request, res: Response) => {
   }
 };
 
+const updateSingleUser = async (req: Request, res: Response) => {
+  try {
+    const userId: number = +req.params.userId;
+    const updateUserData = req.body;
+    const result = await UserServices.updateSingleUserFromDB(userId,updateUserData);
+    res.status(200).json({
+      success: true,
+      message: "Users updated successfully!",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(404).json({
+      success: false,
+      message: "failed to update user data",
+      error: {
+        code: 404,
+        description: error.message || "failed to update user data",
+      },
+    });
+  }
+};
+
+const deleteSingleUserFromDB = async (req: Request, res: Response) => {
+  try {
+    const userId: number = +req.params.userId;
+    const result = await UserServices.deleteSingleUserFromDB(userId);
+    res.status(200).json({
+      success: true,
+      message: "User is deleted successfully!",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(404).json({
+      success: false,
+      message: "can not fetched user",
+      error: {
+        code: 404,
+        description: error.message || "can not fetched user",
+      },
+    });
+  }
+};
+
+// const updateForOrders=async(req:Request,res:Response)=>{
+//   try {
+//     const userId: number = +req.params.userId;
+//     const updateUserData = req.body;
+//     const result = await UserServices.updateOrderFromDB(userId,{$set:updateUserData});
+//     res.status(200).json({
+//       success: true,
+//       message: "User is deleted successfully!",
+//       data: result,
+//     });
+//   }
+//    catch (error) {
+    
+//   }
+  
+// }
+
 export const UserController = {
   createUser,
-  getAllUsers,getSingleUser
+  getAllUsers,
+  getSingleUser,
+  updateSingleUser,
+  deleteSingleUserFromDB,
 };
