@@ -74,7 +74,10 @@ const updateSingleUser = async (req: Request, res: Response) => {
   try {
     const userId: number = +req.params.userId;
     const updateUserData = req.body;
-    const result = await UserServices.updateSingleUserFromDB(userId,updateUserData);
+    const result = await UserServices.updateSingleUserFromDB(
+      userId,
+      updateUserData
+    );
     res.status(200).json({
       success: true,
       message: "Users updated successfully!",
@@ -113,22 +116,49 @@ const deleteSingleUserFromDB = async (req: Request, res: Response) => {
   }
 };
 
-// const updateForOrders=async(req:Request,res:Response)=>{
-//   try {
-//     const userId: number = +req.params.userId;
-//     const updateUserData = req.body;
-//     const result = await UserServices.updateOrderFromDB(userId,{$set:updateUserData});
-//     res.status(200).json({
-//       success: true,
-//       message: "User is deleted successfully!",
-//       data: result,
-//     });
-//   }
-//    catch (error) {
-    
-//   }
-  
-// }
+const createOrders = async (req: Request, res: Response) => {
+  try {
+    const userId: number = +req.params.userId;
+    const updateUserData = req.body;
+    const result = await UserServices.createOrderFromDB(userId, updateUserData);
+    res.status(200).json({
+      success: true,
+      message: "User is deleted successfully!",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(404).json({
+      success: false,
+      message: "can not fetched user",
+      error: {
+        code: 404,
+        description: error.message || "can not fetched user",
+      },
+    });
+  }
+};
+
+const getSingleOrder = async (req: Request, res: Response) => {
+  try {
+    const userId: number = +req.params.userId;
+    const result = await UserServices.getSingleOrder(userId);
+
+    res.status(200).json({
+      success: true,
+      message: "User is deleted successfully!",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(404).json({
+      success: false,
+      message: "can not fetched user",
+      error: {
+        code: 404,
+        description: error.message || "can not fetched user",
+      },
+    });
+  }
+};
 
 export const UserController = {
   createUser,
@@ -136,4 +166,6 @@ export const UserController = {
   getSingleUser,
   updateSingleUser,
   deleteSingleUserFromDB,
+  createOrders,
+  getSingleOrder,
 };

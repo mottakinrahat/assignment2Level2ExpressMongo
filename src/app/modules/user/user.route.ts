@@ -12,6 +12,7 @@ router.get("/:userId", UserController.getSingleUser);
 router.put("/:userId", UserController.updateSingleUser);
 
 router.delete("/:userId", UserController.deleteSingleUserFromDB);
-// router.put("/api/users/:userId/orders",UserController)
+router.put("/api/users/:userId/orders", UserController.createOrders);
+router.get("/api/users/:userId/orders", UserController.getSingleOrder)
 
 export const userRoutes = router;

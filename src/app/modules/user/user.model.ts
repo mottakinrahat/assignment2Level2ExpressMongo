@@ -1,6 +1,12 @@
-import { ordersValidationSchema } from './user.validation';
+import { ordersValidationSchema } from "./user.validation";
 import { Schema, model } from "mongoose";
-import { TAddress, TFullName, TOrders, TUser } from "./user.interface";
+import {
+  TAddress,
+  TFullName,
+  TOrders,
+  TUser,
+  TUserModel,
+} from "./user.interface";
 import bcrypt from "bcrypt";
 import config from "../../config";
 
@@ -35,7 +41,7 @@ const orderSchema = new Schema<TOrders>({
   quantity: { type: Number },
 });
 
-const userSchema = new Schema<TUser>({
+const userSchema = new Schema<TUser, TUserModel>({
   userId: { type: Number, required: [true, "Id is required"], unique: true },
   username: { type: String, required: [true, "username is required"] },
   password: {
@@ -87,4 +93,15 @@ userSchema.pre("aggregate", async function (next) {
   next();
 });
 
-export const UserModel = model<TUser>("User", userSchema);
+//this is for instance
+// userSchema.methods.isUserExists = async function (id: string) {
+//   const existingUser = await UserModel.findOne({ id });
+//   return existingUser;
+// };
+//creating a custom static method
+userSchema.statics.isUserExists = async function (id:number) {
+  const existingUser = await UserModel.findOne({ id });
+  return existingUser;
+};
+
+export const UserModel = model<TUser, TUserModel>("User", userSchema);
