@@ -21,10 +21,10 @@ const createUser = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(404).json({
       success: false,
-      message: "user not created!!",
+      message: "User not found",
       error: {
         code: 404,
-        description: error.message || "User not created",
+        description: error.message,
       },
     });
   }
@@ -41,10 +41,10 @@ const getAllUsers = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(404).json({
       success: false,
-      message: "can not fetched user",
+      message: "User not found",
       error: {
         code: 404,
-        description: error.message || "can not fetched user",
+        description: error.message,
       },
     });
   }
@@ -62,10 +62,10 @@ const getSingleUser = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(404).json({
       success: false,
-      message: "can not fetched user",
+      message: "User not found",
       error: {
         code: 404,
-        description: error.message || "can not fetched user",
+        description: error.message,
       },
     });
   }
@@ -87,10 +87,10 @@ const updateSingleUser = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(404).json({
       success: false,
-      message: "failed to update user data",
+      message: "User not found",
       error: {
         code: 404,
-        description: error.message || "failed to update user data",
+        description: error.message,
       },
     });
   }
@@ -108,10 +108,10 @@ const deleteSingleUserFromDB = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(404).json({
       success: false,
-      message: "can not fetched user",
+      message: "User not found",
       error: {
         code: 404,
-        description: error.message || "can not fetched user",
+        description: error.message,
       },
     });
   }
@@ -124,16 +124,16 @@ const createOrders = async (req: Request, res: Response) => {
     const result = await UserServices.createOrderFromDB(userId, updateUserData);
     res.status(200).json({
       success: true,
-      message: "Order is updated successfully!",
+      message: "Order created successfully!",
       data: result,
     });
   } catch (error: any) {
     res.status(404).json({
       success: false,
-      message: "can not update orders",
+      message: "Orders not found",
       error: {
         code: 404,
-        description: error.message || "can not update orders",
+        description: error.message,
       },
     });
   }
@@ -146,13 +146,13 @@ const getSingleOrder = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      message: "order is get successfully!",
+      message: "Order fetched successfully!",
       data: result,
     });
   } catch (error: any) {
     res.status(404).json({
       success: false,
-      message: "can not get the order data",
+      message: "Orders not found",
       error: {
         code: 404,
         description: error.message || "can not get the order data",
@@ -167,16 +167,16 @@ const getSumPrice = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      message: "Total Price is get successfully!",
+      message: "Total price calculated successfully!",
       data: result,
     });
   } catch (error: any) {
     res.status(404).json({
       success: false,
-      message: "can not get total Price",
+      message: "Orders not found",
       error: {
         code: 404,
-        description: error.message || "can not get total Price",
+        description: error.message,
       },
     });
   }
