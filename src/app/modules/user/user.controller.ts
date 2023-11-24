@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { UserServices } from "./user.service";
 import userValidationSchema from "./user.validation";
+import { TOrders } from "./user.interface";
 
 const createUser = async (req: Request, res: Response) => {
   try {
@@ -119,20 +120,20 @@ const deleteSingleUserFromDB = async (req: Request, res: Response) => {
 const createOrders = async (req: Request, res: Response) => {
   try {
     const userId: number = +req.params.userId;
-    const updateUserData = req.body;
+    const updateUserData:TOrders = req.body;
     const result = await UserServices.createOrderFromDB(userId, updateUserData);
     res.status(200).json({
       success: true,
-      message: "User is deleted successfully!",
+      message: "Order is updated successfully!",
       data: result,
     });
   } catch (error: any) {
     res.status(404).json({
       success: false,
-      message: "can not fetched user",
+      message: "can not update orders",
       error: {
         code: 404,
-        description: error.message || "can not fetched user",
+        description: error.message || "can not update orders",
       },
     });
   }
@@ -145,16 +146,37 @@ const getSingleOrder = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      message: "User is deleted successfully!",
+      message: "order is get successfully!",
       data: result,
     });
   } catch (error: any) {
     res.status(404).json({
       success: false,
-      message: "can not fetched user",
+      message: "can not get the order data",
       error: {
         code: 404,
-        description: error.message || "can not fetched user",
+        description: error.message || "can not get the order data",
+      },
+    });
+  }
+};
+const getSumPrice = async (req: Request, res: Response) => {
+  try {
+    const userId: number = +req.params.userId;
+    const result = await UserServices.getTotalPrice(userId);
+
+    res.status(200).json({
+      success: true,
+      message: "Total Price is get successfully!",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(404).json({
+      success: false,
+      message: "can not get total Price",
+      error: {
+        code: 404,
+        description: error.message || "can not get total Price",
       },
     });
   }
@@ -167,5 +189,5 @@ export const UserController = {
   updateSingleUser,
   deleteSingleUserFromDB,
   createOrders,
-  getSingleOrder,
+  getSingleOrder,getSumPrice
 };

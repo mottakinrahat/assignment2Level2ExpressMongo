@@ -1,4 +1,4 @@
-import { TUser } from "./user.interface";
+import { TOrders, TUser } from "./user.interface";
 import { UserModel } from "./user.model";
 
 const createUserIntoDB = async (user: TUser) => {
@@ -11,6 +11,7 @@ const getUserAllFromDB = async () => {
 };
 
 const getSingleUserFromDB = async (id: number) => {
+  console.log(id);
   const result = await UserModel.findOne({ userId: id });
   return result;
 };
@@ -26,21 +27,41 @@ const deleteSingleUserFromDB = async (id: number) => {
   const result = await UserModel.updateOne({ userId: id }, { isDeleted: true });
   return result;
 };
-const createOrderFromDB = async (id: number, updateUserData: TUser) => {
+const createOrderFromDB = async (id: number, updateOrderData: TOrders) => {
+  console.log(updateOrderData);
   const userId = { userId: id };
-  const updateTheSetMethod = { $push: { orders: updateUserData } };
-  if (await UserModel.isUserExists(updateUserData.userId)) {
-    throw new Error("user exists");
-  }
-  const result = await UserModel.findOneAndUpdate(userId, updateTheSetMethod, {
-    new: true,
-  });
+  const updateTheSetMethod = { $push: { orders: updateOrderData } };
+
+  const result = await UserModel.findOneAndUpdate(userId, updateTheSetMethod,{new: true});
   return result;
 };
 
 const getSingleOrder = async (id: number) => {
   const result = await UserModel.findOne({ userId: id }, { orders: 1, _id: 0 });
   return result;
+};
+const getTotalPrice = async (id: number) => {
+  const aggregation = [
+    {
+      $match: { userId: id },
+    },
+    {
+      $unwind: "$orders",
+    },
+    {
+      $group: { _id: null, totalPrice: { $sum: "$orders.price" } },
+    },
+    {
+      $project: { _id: 0 },
+    },
+  ];
+  const result = await UserModel.aggregate(aggregation);
+
+  if (result.length > 0) {
+    return result;
+  } else {
+    return "You have no price in orders";
+  }
 };
 
 export const UserServices = {
@@ -51,4 +72,5 @@ export const UserServices = {
   deleteSingleUserFromDB,
   createOrderFromDB,
   getSingleOrder,
+  getTotalPrice,
 };
