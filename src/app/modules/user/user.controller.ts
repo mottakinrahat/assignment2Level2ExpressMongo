@@ -81,7 +81,7 @@ const updateSingleUser = async (req: Request, res: Response) => {
     );
     res.status(200).json({
       success: true,
-      message: "Users updated successfully!",
+      message: "User updated successfully!",
       data: result,
     });
   } catch (error: any) {
@@ -102,7 +102,7 @@ const deleteSingleUserFromDB = async (req: Request, res: Response) => {
     const result = await UserServices.deleteSingleUserFromDB(userId);
     res.status(200).json({
       success: true,
-      message: "User is deleted successfully!",
+      message: "User deleted successfully!",
       data: result,
     });
   } catch (error: any) {
