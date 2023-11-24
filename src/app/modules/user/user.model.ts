@@ -99,7 +99,7 @@ userSchema.pre("aggregate", async function (next) {
 //   return existingUser;
 // };
 //creating a custom static method
-userSchema.statics.isUserExists = async function (id:number) {
+userSchema.statics.isUserExists = async function (id: number) {
   const existingUser = await UserModel.findOne({ id });
   return existingUser;
 };
