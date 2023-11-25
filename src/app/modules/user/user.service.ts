@@ -2,6 +2,11 @@ import { TOrders, TUser } from "./user.interface";
 import { UserModel } from "./user.model";
 
 const createUserIntoDB = async (user: TUser) => {
+  const exists = await UserModel.isUserExists(user.userId);
+  if (exists) {
+    throw new Error("User is already exist");
+  }
+
   const result = await UserModel.create(user);
   return result;
 };
@@ -11,11 +16,19 @@ const getUserAllFromDB = async () => {
 };
 
 const getSingleUserFromDB = async (id: number) => {
-  console.log(id);
+  const exists = await UserModel.isUserExists(id);
+  if (!exists) {
+    throw new Error("User does not exist");
+  }
   const result = await UserModel.findOne({ userId: id });
   return result;
 };
 const updateSingleUserFromDB = async (id: number, updateUserData: TUser) => {
+  const exists = await UserModel.isUserExists(id);
+  if (!exists) {
+    throw new Error("User does not exist");
+  }
+
   const result = await UserModel.findOneAndUpdate(
     { userId: id },
     { $set: updateUserData },
@@ -24,23 +37,42 @@ const updateSingleUserFromDB = async (id: number, updateUserData: TUser) => {
   return result;
 };
 const deleteSingleUserFromDB = async (id: number) => {
+  const exists = await UserModel.isUserExists(id);
+  if (!exists) {
+    throw new Error("User does not exist");
+  }
   const result = await UserModel.updateOne({ userId: id }, { isDeleted: true });
   return result;
 };
 const createOrderFromDB = async (id: number, updateOrderData: TOrders) => {
-  console.log(updateOrderData);
+  const exists = await UserModel.isUserExists(id);
+  if (!exists) {
+    throw new Error("User does not exist");
+  }
   const userId = { userId: id };
   const updateTheSetMethod = { $push: { orders: updateOrderData } };
 
-  const result = await UserModel.findOneAndUpdate(userId, updateTheSetMethod,{new: true});
+  const result = await UserModel.findOneAndUpdate(userId, updateTheSetMethod, {
+    new: true,
+  });
   return result;
 };
 
 const getSingleOrder = async (id: number) => {
+  const exists = await UserModel.isUserExists(id);
+  if (!exists) {
+    throw new Error("User does not exist");
+  }
+
   const result = await UserModel.findOne({ userId: id }, { orders: 1, _id: 0 });
   return result;
 };
 const getTotalPrice = async (id: number) => {
+  const exists = await UserModel.isUserExists(id);
+  if (!exists) {
+    throw new Error("User does not exist");
+  }
+
   const aggregation = [
     {
       $match: { userId: id },

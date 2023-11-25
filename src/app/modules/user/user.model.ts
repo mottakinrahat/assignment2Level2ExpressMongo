@@ -76,7 +76,7 @@ userSchema.pre("save", async function (next) {
 });
 
 userSchema.post("save", async function (doc, next) {
-  doc.password = "";
+  doc.password = " ";
   next();
 });
 
@@ -100,7 +100,7 @@ userSchema.pre("aggregate", async function (next) {
 // };
 //creating a custom static method
 userSchema.statics.isUserExists = async function (id: number) {
-  const existingUser = await UserModel.findOne({ id });
+  const existingUser = await UserModel.findOne({ userId: id });
   return existingUser;
 };
 
