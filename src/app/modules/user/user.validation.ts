@@ -18,12 +18,19 @@ export const ordersValidationSchema = z.object({
 });
 
 const userValidationSchema = z.object({
-  userId: z.number(),
-  username: z.string().min(1).max(255),
-  password: z.string(),
+  userId: z.number({ required_error: "userId is required" }),
+  username: z
+    .string({ required_error: "userId is required and should be unique" })
+    .min(1)
+    .max(255),
+  password: z.string({ required_error: "password is required" }),
   fullName: fullNameValidationSchema,
-  age: z.number(),
-  email: z.string().email().min(1).max(255),
+  age: z.number({ required_error: "age is required" }),
+  email: z
+    .string({ required_error: "email is required" })
+    .email()
+    .min(1)
+    .max(255),
   isActive: z.boolean().default(false),
   hobbies: z.array(z.string()),
   address: addressValidationSchema,

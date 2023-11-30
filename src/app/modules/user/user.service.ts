@@ -7,7 +7,7 @@ const createUserIntoDB = async (user: TUser) => {
     throw new Error("User is already exist");
   }
 
-  const result = await UserModel.create(user, {});
+  const result = await UserModel.create(user);
   return result;
 };
 const getUserAllFromDB = async () => {

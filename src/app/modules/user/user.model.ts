@@ -43,7 +43,11 @@ const orderSchema = new Schema<TOrders>({
 
 const userSchema = new Schema<TUser, TUserModel>({
   userId: { type: Number, required: [true, "Id is required"], unique: true },
-  username: { type: String, required: [true, "username is required"],unique:true },
+  username: {
+    type: String,
+    required: [true, "username is required"],
+    unique: true,
+  },
   password: {
     type: String,
     required: [true, "Password is required"],
@@ -53,7 +57,7 @@ const userSchema = new Schema<TUser, TUserModel>({
     required: true,
   },
   age: { type: Number, required: [true, "Age is required"] },
-  email: { type: String, required: [true, "Email is required"], unique: true },
+  email: { type: String, required: [true, "Email is required"] },
   isActive: {
     type: Boolean,
   },
@@ -76,7 +80,9 @@ userSchema.pre("save", async function (next) {
 });
 
 userSchema.post("save", async function (doc, next) {
-  doc.password = " ";
+  if (doc) {
+    doc.password = "";
+  }
   next();
 });
 
