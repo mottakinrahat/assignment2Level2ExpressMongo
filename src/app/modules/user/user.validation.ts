@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { AnyZodObject, z } from "zod";
 
 export const fullNameValidationSchema = z.object({
   firstName: z.string().trim().min(1).max(255),
@@ -20,7 +20,7 @@ export const ordersValidationSchema = z.object({
 const userValidationSchema = z.object({
   userId: z.number({ required_error: "userId is required" }),
   username: z
-    .string({ required_error: "userId is required and should be unique" })
+    .string({ required_error: "username is required and should be unique" })
     .min(1)
     .max(255),
   password: z.string({ required_error: "password is required" }),
@@ -38,20 +38,6 @@ const userValidationSchema = z.object({
   orders: z.array(ordersValidationSchema).optional(),
 });
 
-const updateUserZodSchema = z.object({
-  userId: z.number().optional(),
-  username: z.string().min(1).max(255).optional(),
-  password: z.string().optional(),
-  fullName: fullNameValidationSchema.optional(),
-  age: z.number().optional(),
-  email: z.string().email().min(1).max(255).optional(),
-  isActive: z.boolean().default(false).optional(),
-  hobbies: z.array(z.string()).optional(),
-  address: addressValidationSchema.optional(),
-  isDeleted: z.boolean().default(false).optional(),
-  orders: z.array(ordersValidationSchema).optional(),
-});
 export const UserValidation = {
   userValidationSchema,
-  updateUserZodSchema,
 };

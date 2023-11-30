@@ -2,11 +2,11 @@ import { UserValidation } from "./user.validation";
 import { Request, Response } from "express";
 import { UserServices } from "./user.service";
 
-import { TOrders } from "./user.interface";
+import { TOrders, TUser } from "./user.interface";
 
 const createUser = async (req: Request, res: Response) => {
   try {
-    const user = req.body;
+    const user:TUser = req.body;
     //data validation
     const zodParseData = UserValidation.userValidationSchema.parse(user);
 

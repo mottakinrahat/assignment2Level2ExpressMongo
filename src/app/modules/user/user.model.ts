@@ -57,7 +57,7 @@ const userSchema = new Schema<TUser, TUserModel>({
     required: true,
   },
   age: { type: Number, required: [true, "Age is required"] },
-  email: { type: String, required: [true, "Email is required"] },
+  email: { type: String, required: [true, "Email is required"]},
   isActive: {
     type: Boolean,
   },
@@ -66,7 +66,6 @@ const userSchema = new Schema<TUser, TUserModel>({
     required: true,
   },
   address: { type: addressSchema, required: true },
-  isDeleted: { type: Boolean, default: false },
   orders: {
     type: [orderSchema],
   },
@@ -86,25 +85,6 @@ userSchema.post("save", async function (doc, next) {
   next();
 });
 
-userSchema.pre("find", async function (next) {
-  this.find({ isDeleted: { $ne: true } });
-  next();
-});
-userSchema.pre("findOne", async function (next) {
-  this.find({ isDeleted: { $ne: true } });
-  next();
-});
-userSchema.pre("aggregate", async function (next) {
-  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
-  next();
-});
-
-//this is for instance
-// userSchema.methods.isUserExists = async function (id: string) {
-//   const existingUser = await UserModel.findOne({ id });
-//   return existingUser;
-// };
-//creating a custom static method
 userSchema.statics.isUserExists = async function (id: number) {
   const existingUser = await UserModel.findOne({ userId: id });
   return existingUser;

@@ -8,7 +8,9 @@ const createUserIntoDB = async (user: TUser) => {
   }
 
   const result = await UserModel.create(user);
-  return result;
+
+  const {_id,orders, password, ...restData } = result.toObject();
+  return restData;
 };
 const getUserAllFromDB = async () => {
   const result = await UserModel.find(
@@ -25,7 +27,7 @@ const getSingleUserFromDB = async (id: number) => {
   }
   const result = await UserModel.findOne(
     { userId: id },
-    { _id: 0, orders: 0, password: 0, isDeleted: 0 }
+    { _id: 0, orders: 0, password: 0 }
   );
   return result;
 };
@@ -38,7 +40,7 @@ const updateSingleUserFromDB = async (id: number, updateUserData: TUser) => {
   const result = await UserModel.findOneAndUpdate(
     { userId: id },
     { $set: updateUserData },
-    { new: true, projection: { password: 0, _id: 0, orders: 0, isDeleted: 0 } }
+    { new: true, projection: { password: 0, _id: 0, orders: 0} }
   );
   return result;
 };
@@ -47,7 +49,7 @@ const deleteSingleUserFromDB = async (id: number) => {
   if (!exists) {
     throw new Error("User does not exist");
   }
-  const result = await UserModel.updateOne({ userId: id }, { isDeleted: true });
+  const result = await UserModel.deleteOne({ userId: id });
   return result;
 };
 const createOrderFromDB = async (id: number, updateOrderData: TOrders) => {
