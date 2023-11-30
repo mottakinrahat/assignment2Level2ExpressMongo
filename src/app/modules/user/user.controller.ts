@@ -1,23 +1,22 @@
+import { UserValidation } from "./user.validation";
 import { Request, Response } from "express";
 import { UserServices } from "./user.service";
-import userValidationSchema from "./user.validation";
+
 import { TOrders } from "./user.interface";
 
 const createUser = async (req: Request, res: Response) => {
   try {
     const user = req.body;
-
     //data validation
-    const zodParseData = userValidationSchema.parse(user);
+    const zodParseData = UserValidation.userValidationSchema.parse(user);
 
-    const result = UserServices.createUserIntoDB(zodParseData);
+    const result = await UserServices.createUserIntoDB(zodParseData);
 
     res.status(200).json({
       success: true,
       message: "User created successfully!",
       data: result,
     });
-    return user;
   } catch (error: any) {
     res.status(404).json({
       success: false,
@@ -120,7 +119,7 @@ const deleteSingleUserFromDB = async (req: Request, res: Response) => {
 const createOrders = async (req: Request, res: Response) => {
   try {
     const userId: number = +req.params.userId;
-    const updateUserData:TOrders = req.body;
+    const updateUserData: TOrders = req.body;
     const result = await UserServices.createOrderFromDB(userId, updateUserData);
     res.status(200).json({
       success: true,
@@ -189,5 +188,6 @@ export const UserController = {
   updateSingleUser,
   deleteSingleUserFromDB,
   createOrders,
-  getSingleOrder,getSumPrice
+  getSingleOrder,
+  getSumPrice,
 };

@@ -7,11 +7,14 @@ const createUserIntoDB = async (user: TUser) => {
     throw new Error("User is already exist");
   }
 
-  const result = await UserModel.create(user);
+  const result = await UserModel.create(user, {});
   return result;
 };
 const getUserAllFromDB = async () => {
-  const result = await UserModel.find();
+  const result = await UserModel.find(
+    {},
+    { _id: 0, username: 1, fullName: 1, age: 1, email: 1, address: 1 }
+  );
   return result;
 };
 
@@ -20,7 +23,10 @@ const getSingleUserFromDB = async (id: number) => {
   if (!exists) {
     throw new Error("User does not exist");
   }
-  const result = await UserModel.findOne({ userId: id });
+  const result = await UserModel.findOne(
+    { userId: id },
+    { _id: 0, orders: 0, password: 0, isDeleted: 0 }
+  );
   return result;
 };
 const updateSingleUserFromDB = async (id: number, updateUserData: TUser) => {
@@ -32,7 +38,7 @@ const updateSingleUserFromDB = async (id: number, updateUserData: TUser) => {
   const result = await UserModel.findOneAndUpdate(
     { userId: id },
     { $set: updateUserData },
-    { new: true }
+    { new: true, projection: { password: 0, _id: 0, orders: 0, isDeleted: 0 } }
   );
   return result;
 };
